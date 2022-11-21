@@ -1,0 +1,23 @@
+# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
+version: 2.1
+
+jobs:
+  run_tests:
+    docker:
+      - image: 'circleci/node:16.13.1
+    steps:
+      - checkout
+      - run:
+          name: Install  npm dependencies
+          command: |
+            npm install --save
+      - run:
+          name: Run unit tests on Circle
+          command: |
+            cd server |
+            npm run test
+workflows:
+  build_tests:
+    jobs:
+      - run_tests
+
