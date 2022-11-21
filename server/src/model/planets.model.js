@@ -1,45 +1,59 @@
-const parse = require('csv-parse');
-const fs = require('fs');
+const mongoose = require('mongoose');
 
-const habitablePlanets = [];
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 
-function isHabitablePlanet(planet) {
-  return planet['koi_disposition'] === 'CONFIRMED'
-    && planet['koi_insol'] > 0.36 && planet['koi_insol'] < 1.11
-    && planet['koi_prad'] < 1.6;
-}
+const PlanetSchema = new Schema({
+  kepid: String,
+  kepoi_name: String,
+  kepler_name: String,
+  koi_disposition: String,
+  koi_pdisposition: String,
+  koi_score: String,
+  koi_fpflag_nt: String,
+  koi_fpflag_ss: String,
+  koi_fpflag_co: String,
+  koi_fpflag_ec: String,
+  koi_period: String,
+  koi_period_err1: String,
+  koi_period_err2: String,
+  koi_time0bk: String,
+  koi_time0bk_err1: String,
+  koi_time0bk_err2: String,
+  koi_impact: String,
+  koi_impact_err1: String,
+  koi_impact_err2: String,
+  koi_duration: String,
+  koi_duration_err1: String,
+  koi_duration_err2: String,
+  koi_depth: String,
+  koi_depth_err1: String,
+  koi_depth_err2: String,
+  koi_prad: String,
+  koi_prad_err1: String,
+  koi_prad_err2: String,
+  koi_teq: String,
+  koi_teq_err1: String,
+  koi_teq_err2: String,
+  koi_insol: String,
+  koi_insol_err1: String,
+  koi_insol_err2: String,
+  koi_model_snr: String,
+  koi_tce_plnt_num: String,
+  koi_tce_delivname: String,
+  koi_steff: String,
+  koi_steff_err1: String,
+  koi_steff_err2: String,
+  koi_slogg: String,
+  koi_slogg_err1: String,
+  koi_slogg_err2: String,
+  koi_srad: String,
+  koi_srad_err1: String,
+  koi_srad_err2: String,
+  ra: String,
+  dec: String,
+  koi_kepmag: String,
+});
+const Planet = mongoose.model('Planet', PlanetSchema);
+module.exports = Planet;
 
-function loadData() {
-  return new Promise(function(resolve, reject) {
-    fs.createReadStream('../server/src/data/kepler_data.csv')
-  .pipe(parse({
-    comment: '#',
-    columns: true,
-  }))
-  .on('data', (data) => {
-    if (isHabitablePlanet(data)) {
-      habitablePlanets.push(data);
-    }
-  })
-  .on('error', (err) => {
-    console.log(err);
-  })
-  .on('end', () => {
-    console.log(
-      `${habitablePlanets.length} habitable planets found!`
-    );
-
-    resolve(habitablePlanets);
-  });
-  })
-}
-
-function getAllPlanets() {
-  return habitablePlanets;
-}
-
-
-module.exports =  {
-  loadData,
-  getAllPlanets
-}
